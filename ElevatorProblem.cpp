@@ -27,28 +27,44 @@ namespace ElevatorProblem {
         std::unique_lock<std::mutex> lock(mtx);
         while (true) {
             while (requests.empty()) {
+<<<<<<< HEAD
                 log("Ascenseur en attente de demande...");
+=======
+                log("Ascenseur attend une demande...");
+>>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
                 cv.wait(lock);
             }
 
             int floor = requests.front();
             requests.pop();
             moving = true;
+<<<<<<< HEAD
             log("Ascenseur se deplace vers l etage " + std::to_string(floor));
+=======
+            log("Ascenseur se déplace vers l'étage " + std::to_string(floor));
+>>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
             lock.unlock();
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500 + abs(floor - currentFloor) * 200));
             currentFloor = floor;
 
             lock.lock();
+<<<<<<< HEAD
             log("Ascenseur arrive a l etage " + std::to_string(currentFloor));
+=======
+            log("Ascenseur arrivé à l'étage " + std::to_string(currentFloor));
+>>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
             moving = false;
         }
     }
 
     void passenger(int id, int targetFloor) {
         std::unique_lock<std::mutex> lock(mtx);
+<<<<<<< HEAD
         log("Passager #" + std::to_string(id) + " demande l etage " + std::to_string(targetFloor));
+=======
+        log("Passager #" + std::to_string(id) + " demande l'étage " + std::to_string(targetFloor));
+>>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
         requests.push(targetFloor);
         cv.notify_one();
     }
@@ -73,7 +89,11 @@ namespace ElevatorProblem {
 
     std::string generateElevatorHTML() {
         std::ostringstream html;
+<<<<<<< HEAD
         html << "<html><body><h1>Probleme de l Ascenseur</h1><ul>";
+=======
+        html << "<html><body><h1>Problème de l'Ascenseur</h1><ul>";
+>>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
         for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
         }
@@ -82,3 +102,7 @@ namespace ElevatorProblem {
     }
 
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
