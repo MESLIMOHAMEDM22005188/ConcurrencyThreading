@@ -1,21 +1,22 @@
-cmake_minimum_required(VERSION 3.31)
-project(concurency)
+cmake_minimum_required(VERSION 3.26)
+project(concurency_app)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(concurency_app main.cpp
+# Liste des fichiers sources de ton projet
+add_executable(concurency_app
+        main.cpp
         WorkerConcurrency.cpp
         LoggerSync.cpp
-        LoggerSync.hpp
         BenchmarkPerformence.cpp
-        BenchmarkPerformence.hpp
-        BarberProblem.hpp
         BarberProblem.cpp
         ElevatorProblem.cpp
-        ElevatorProblem.hpp
         BuffetProblem.cpp
-        BuffetProblem.hpp
         LightouseProblem.cpp
-        LightouseProblem.hpp
 )
 
+# Sous Windows, forcer le mode console (corrige WinMain)
+if (WIN32)
+    set_target_properties(concurency_app PROPERTIES LINK_FLAGS "-Wl,-subsystem,console")
+endif()

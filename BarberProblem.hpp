@@ -5,8 +5,8 @@
 
 namespace BarberProblem {
     void runBarberProblem();
+    void printLogs();
     std::string generateBarberHTML();
 }
 
 #endif
-

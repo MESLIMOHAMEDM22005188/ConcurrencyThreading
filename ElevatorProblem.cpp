@@ -27,28 +27,28 @@ namespace ElevatorProblem {
         std::unique_lock<std::mutex> lock(mtx);
         while (true) {
             while (requests.empty()) {
-                log("Ascenseur attend une demande...");
+                log("Ascenseur en attente de demande...");
                 cv.wait(lock);
             }
 
             int floor = requests.front();
             requests.pop();
             moving = true;
-            log("Ascenseur se déplace vers l'étage " + std::to_string(floor));
+            log("Ascenseur se deplace vers l etage " + std::to_string(floor));
             lock.unlock();
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500 + abs(floor - currentFloor) * 200));
             currentFloor = floor;
 
             lock.lock();
-            log("Ascenseur arrivé à l'étage " + std::to_string(currentFloor));
+            log("Ascenseur arrive a l etage " + std::to_string(currentFloor));
             moving = false;
         }
     }
 
     void passenger(int id, int targetFloor) {
         std::unique_lock<std::mutex> lock(mtx);
-        log("Passager #" + std::to_string(id) + " demande l'étage " + std::to_string(targetFloor));
+        log("Passager #" + std::to_string(id) + " demande l etage " + std::to_string(targetFloor));
         requests.push(targetFloor);
         cv.notify_one();
     }
@@ -73,7 +73,7 @@ namespace ElevatorProblem {
 
     std::string generateElevatorHTML() {
         std::ostringstream html;
-        html << "<html><body><h1>Problème de l'Ascenseur</h1><ul>";
+        html << "<html><body><h1>Probleme de l Ascenseur</h1><ul>";
         for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
         }
@@ -82,4 +82,3 @@ namespace ElevatorProblem {
     }
 
 }
-

@@ -16,7 +16,7 @@ namespace BenchmarkPerformance {
     }
 
     void printPerformance(double seconds) {
-        std::cout << "Benchmark Performance :\n";
-        std::cout << " Temps d'exécution du calcul : " << seconds << " secondes\n";
+        std::cout << "Benchmark Performance :" << std::endl;
+        std::cout << " Temps d execution du calcul : " << seconds << " secondes" << std::endl;
     }
 }

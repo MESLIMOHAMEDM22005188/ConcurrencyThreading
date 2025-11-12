@@ -23,7 +23,7 @@ namespace BuffetProblem {
     void serveDish(int customerId) {
         std::unique_lock<std::mutex> lock(mtx);
         while (dishesAvailable == 0) {
-            log("Client #" + std::to_string(customerId) + " attend la réapprovisionnement");
+            log("Client #" + std::to_string(customerId) + " attend le reapprovisionnement");
             cv.wait(lock);
         }
         dishesAvailable--;
@@ -40,7 +40,7 @@ namespace BuffetProblem {
         std::unique_lock<std::mutex> lock(mtx);
         while (true) {
             if (dishesAvailable == 0) {
-                log("Réapprovisionnement du buffet...");
+                log("Reapprovisionnement du buffet...");
                 dishesAvailable = MAX_DISHES;
                 cv.notify_all();
             }
@@ -68,7 +68,7 @@ namespace BuffetProblem {
 
     std::string generateBuffetHTML() {
         std::ostringstream html;
-        html << "<html><body><h1>Problème du Buffet</h1><ul>";
+        html << "<html><body><h1>Probleme du Buffet</h1><ul>";
         for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
         }
@@ -76,3 +76,4 @@ namespace BuffetProblem {
         return html.str();
     }
 }
+

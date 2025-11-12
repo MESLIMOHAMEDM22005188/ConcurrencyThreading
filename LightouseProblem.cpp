@@ -21,7 +21,7 @@ namespace LighthouseProblem {
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 lightOn = !lightOn;
-                log("Phare " + std::string(lightOn ? "allumé" : "éteint"));
+                log("Phare " + std::string(lightOn ? "allume" : "eteint"));
             }
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -32,7 +32,7 @@ namespace LighthouseProblem {
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 if (lightOn) {
-                    log("Navire #" + std::to_string(id) + " passe en toute sécurité");
+                    log("Navire #" + std::to_string(id) + " passe en toute securite");
                 } else {
                     log("Navire #" + std::to_string(id) + " attend que le phare s'allume");
                 }
@@ -59,7 +59,7 @@ namespace LighthouseProblem {
 
     std::string generateLighthouseHTML() {
         std::ostringstream html;
-        html << "<html><body><h1>Problème du Phare</h1><ul>";
+        html << "<html><body><h1>Probleme du Phare</h1><ul>";
         for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
         }
@@ -68,4 +68,3 @@ namespace LighthouseProblem {
     }
 
 }
-
