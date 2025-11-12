@@ -163,5 +163,4 @@ namespace BarberProblem {
         return html.str();
     }
 
-
 } // namespace BarberProblem
