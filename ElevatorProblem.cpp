@@ -1,10 +1,13 @@
 #include "ElevatorProblem.hpp"
-#include <thread>
-#include <mutex>
+
+#include <chrono>
 #include <condition_variable>
+#include <cstdlib>
+#include <mutex>
 #include <queue>
 #include <sstream>
-#include <chrono>
+#include <string>
+#include <thread>
 #include <vector>
 
 namespace ElevatorProblem {
@@ -18,61 +21,54 @@ namespace ElevatorProblem {
     std::queue<int> requests;
     std::vector<std::string> logMessages;
 
-    void log(const std::string& msg) {
+    void log(const std::string& message) {
         std::lock_guard<std::mutex> lock(mtx);
-        logMessages.push_back(msg);
+        logMessages.push_back(message);
     }
 
     void elevator() {
         std::unique_lock<std::mutex> lock(mtx);
+
         while (true) {
             while (requests.empty()) {
-<<<<<<< HEAD
-                log("Ascenseur en attente de demande...");
-=======
-                log("Ascenseur attend une demande...");
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+                log("Elevator is waiting for a request...");
                 cv.wait(lock);
             }
 
-            int floor = requests.front();
+            const int targetFloor = requests.front();
             requests.pop();
             moving = true;
-<<<<<<< HEAD
-            log("Ascenseur se deplace vers l etage " + std::to_string(floor));
-=======
-            log("Ascenseur se déplace vers l'étage " + std::to_string(floor));
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+
+            const int distance = std::abs(targetFloor - currentFloor);
+            log("Elevator is moving to floor " + std::to_string(targetFloor));
             lock.unlock();
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(500 + abs(floor - currentFloor) * 200));
-            currentFloor = floor;
-
+            std::this_thread::sleep_for(std::chrono::milliseconds(500 + distance * 200));
             lock.lock();
-<<<<<<< HEAD
-            log("Ascenseur arrive a l etage " + std::to_string(currentFloor));
-=======
-            log("Ascenseur arrivé à l'étage " + std::to_string(currentFloor));
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+
+            currentFloor = targetFloor;
+            log("Elevator has arrived at floor " + std::to_string(currentFloor));
             moving = false;
         }
     }
 
     void passenger(int id, int targetFloor) {
-        std::unique_lock<std::mutex> lock(mtx);
-<<<<<<< HEAD
-        log("Passager #" + std::to_string(id) + " demande l etage " + std::to_string(targetFloor));
-=======
-        log("Passager #" + std::to_string(id) + " demande l'étage " + std::to_string(targetFloor));
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+        std::lock_guard<std::mutex> lock(mtx);
+        log("Passenger #" + std::to_string(id) + " requested floor " + std::to_string(targetFloor));
         requests.push(targetFloor);
         cv.notify_one();
     }
 
     void runElevatorProblem() {
-        logMessages.clear();
-        currentFloor = 0;
-        moving = false;
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            logMessages.clear();
+            while (!requests.empty()) {
+                requests.pop();
+            }
+            currentFloor = 0;
+            moving = false;
+        }
 
         std::thread elevatorThread(elevator);
 
@@ -82,18 +78,18 @@ namespace ElevatorProblem {
         passengers.emplace_back(passenger, 3, 2);
         passengers.emplace_back(passenger, 4, 10);
 
-        for (auto& t : passengers) t.join();
+        for (auto& thread : passengers) {
+            thread.join();
+        }
 
-        elevatorThread.detach();  // Pas de terminaison propre
+        // This is a demonstration thread that remains active while the program runs.
+        elevatorThread.detach();
     }
 
     std::string generateElevatorHTML() {
+        std::lock_guard<std::mutex> lock(mtx);
         std::ostringstream html;
-<<<<<<< HEAD
-        html << "<html><body><h1>Probleme de l Ascenseur</h1><ul>";
-=======
-        html << "<html><body><h1>Problème de l'Ascenseur</h1><ul>";
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+        html << "<html><body><h1>Elevator Problem</h1><ul>";
         for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
         }
@@ -101,8 +97,4 @@ namespace ElevatorProblem {
         return html.str();
     }
 
-}
-<<<<<<< HEAD
-=======
-
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+} // namespace ElevatorProblem
