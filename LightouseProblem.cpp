@@ -1,9 +1,11 @@
 #include "LightouseProblem.hpp"
-#include <thread>
-#include <mutex>
-#include <vector>
-#include <sstream>
+
 #include <chrono>
+#include <mutex>
+#include <sstream>
+#include <string>
+#include <thread>
+#include <vector>
 
 namespace LighthouseProblem {
 
@@ -11,9 +13,9 @@ namespace LighthouseProblem {
     bool lightOn = false;
     std::vector<std::string> logMessages;
 
-    void log(const std::string& msg) {
+    void log(const std::string& message) {
         std::lock_guard<std::mutex> lock(mtx);
-        logMessages.push_back(msg);
+        logMessages.push_back(message);
     }
 
     void lighthouse() {
@@ -21,45 +23,55 @@ namespace LighthouseProblem {
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 lightOn = !lightOn;
-                log("Phare " + std::string(lightOn ? "allume" : "eteint"));
+                log("Lighthouse light " + std::string(lightOn ? "turned on" : "turned off"));
             }
+
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
     void ship(int id) {
-        for (int i = 0; i < 3; ++i) {
+        for (int attempt = 0; attempt < 3; ++attempt) {
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 if (lightOn) {
-                    log("Navire #" + std::to_string(id) + " passe en toute securite");
+                    log("Ship #" + std::to_string(id) + " passes safely");
                 } else {
-                    log("Navire #" + std::to_string(id) + " attend que le phare s'allume");
+                    log("Ship #" + std::to_string(id) + " is waiting for the lighthouse to turn on");
                 }
             }
+
             std::this_thread::sleep_for(std::chrono::milliseconds(700));
         }
     }
 
     void runLighthouseProblem() {
-        logMessages.clear();
-        lightOn = false;
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            logMessages.clear();
+            lightOn = false;
+        }
 
         std::thread lightThread(lighthouse);
 
         std::vector<std::thread> ships;
-        for (int i = 1; i <= 5; ++i) {
-            ships.emplace_back(ship, i);
+        for (int id = 1; id <= 5; ++id) {
+            ships.emplace_back(ship, id);
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
         }
 
-        for (auto& t : ships) t.join();
+        for (auto& thread : ships) {
+            thread.join();
+        }
+
+        // This demonstration thread remains active while the program runs.
         lightThread.detach();
     }
 
     std::string generateLighthouseHTML() {
+        std::lock_guard<std::mutex> lock(mtx);
         std::ostringstream html;
-        html << "<html><body><h1>Probleme du Phare</h1><ul>";
+        html << "<html><body><h1>Lighthouse Problem</h1><ul>";
         for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
         }
@@ -67,4 +79,4 @@ namespace LighthouseProblem {
         return html.str();
     }
 
-}
+} // namespace LighthouseProblem
