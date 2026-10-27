@@ -1,45 +1,51 @@
-# CppConcurrencyPlayground
+# C++ Concurrency Playground
 
-Bienvenue dans ce projet C++ ludique et pédagogique consacré aux concepts de **concurrence**, **synchronisation** et **performance**.  
-Ce dépôt contient plusieurs petits programmes et simulations pour explorer ces notions à travers des exemples concrets, implémentés en C++20 avec multithreading.
+A hands-on C++ project for exploring concurrency, thread synchronization, and performance through small, interactive command-line demonstrations.
 
----
+The examples use C++20 and the standard threading library.
 
-## Description
+## Concepts covered
 
-Ce projet propose un "jeu" en ligne de commande où tu choisis quel concept tu souhaites explorer parmi :
+1. **Concurrent execution** — Split an integer-summing task across multiple threads.
+2. **Thread-safe logging** — Protect shared log data with a mutex.
+3. **Performance benchmarking** — Measure the runtime of a computationally intensive loop.
+4. **The sleeping barber problem** — Model coordination between a barber and waiting customers.
+5. **The elevator problem** — Simulate concurrent floor requests.
+6. **The buffet problem** — Explore concurrent consumption, waiting, and replenishment.
+7. **The lighthouse problem** — Simulate synchronization between a lighthouse and ships.
 
-1. **Concurrence** — Exécution parallèle d'un calcul réparti sur plusieurs threads.
-2. **Synchronisation** — Gestion sécurisée de logs partagés par plusieurs threads avec mutex.
-3. **Performance** — Benchmark simple mesurant le temps d'exécution d'une boucle intensive.
-4. **Problème du barbier dormant** — Simulation classique de synchronisation entre threads.
-5. **Problème de l'ascenseur** — Gestion concurrente des appels à un ascenseur.
-6. **Problème du buffet** — Gestion d'un système d'attente et réapprovisionnement.
-7. **Problème du phare** — Synchronisation entre un phare et des navires.
+## Project structure
 
-Chaque exemple génère une sortie HTML ou texte pour visualiser les résultats.
+- `main.cpp`: Interactive menu and application entry point.
+- `WorkerConcurrency.hpp/.cpp`: Parallel computation example.
+- `LoggerSync.hpp/.cpp`: Thread-safe logging using a mutex.
+- `BenchmarkPerformance.hpp/.cpp`: Execution-time benchmark.
+- `BarberProblem.hpp/.cpp`: Sleeping barber simulation.
+- `ElevatorProblem.hpp/.cpp`: Elevator request simulation.
+- `BuffetProblem.hpp/.cpp`: Shared buffet simulation.
+- `LighthouseProblem.hpp/.cpp`: Lighthouse and ship simulation.
+- `CMakeLists.txt`: CMake build configuration.
 
----
+## Requirements
 
-## Structure
+- A C++20-compatible compiler
+- CMake 3.26 or later
 
-- `main.cpp` : Interface de sélection et lancement des concepts.
-- `WorkerConcurrency.hpp/cpp` : Exemples de calculs multithreadés.
-- `LoggerSync.hpp/cpp` : Logs synchronisés via mutex.
-- `BenchmarkPerformence.hpp/cpp` : Mesure de performance.
-- `BarberProblem.hpp/cpp` : Simulation du problème du barbier dormant.
-- `ElevatorProblem.hpp/cpp` : Simulation du problème de l'ascenseur.
-- `BuffetProblem.hpp/cpp` : Simulation du problème du buffet.
-- `LighthouseProblem.hpp/cpp` : Simulation du problème du phare.
+## Build
 
----
-
-## Installation et compilation
-
-Le projet utilise **CMake** (minimum version 3.31) et C++20.
+From the repository root:
 
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
+cmake -S . -B build
+cmake --build build
+```
+
+Run the executable generated in the `build` directory. The exact executable path depends on your operating system and generator.
+
+## Learning goals
+
+This project is intended to make concurrency concepts easier to understand by showing how threads run, how shared state is protected, and how coordination problems can be modelled.
+
+## Notes
+
+Some simulations emit HTML-formatted output as a string; they do not necessarily write an HTML file automatically.
