@@ -8,5 +8,4 @@ namespace LighthouseProblem {
     std::string generateLighthouseHTML();
 }
 
-#endif
-
+#endif // LIGHTHOUSE_PROBLEM_HPP
