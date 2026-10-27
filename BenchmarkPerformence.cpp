@@ -1,22 +1,32 @@
 #include "BenchmarkPerformence.hpp"
+
 #include <chrono>
 #include <iostream>
 
 namespace BenchmarkPerformance {
 
     double runBenchmark() {
-        auto start = std::chrono::high_resolution_clock::now();
+        const auto start = std::chrono::high_resolution_clock::now();
         long long sum = 0;
-        for (int i = 0; i < 10000000; ++i) {
+
+        for (int i = 0; i < 10'000'000; ++i) {
             sum += i;
         }
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff = end - start;
-        return diff.count();
+
+        const auto end = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double> elapsed = end - start;
+
+        // Keep the result observable so the computation remains meaningful.
+        if (sum == -1) {
+            std::cout << sum << std::endl;
+        }
+
+        return elapsed.count();
     }
 
     void printPerformance(double seconds) {
-        std::cout << "Benchmark Performance :" << std::endl;
-        std::cout << " Temps d execution du calcul : " << seconds << " secondes" << std::endl;
+        std::cout << "Performance benchmark:" << std::endl;
+        std::cout << " Calculation runtime: " << seconds << " seconds" << std::endl;
     }
-}
+
+} // namespace BenchmarkPerformance
