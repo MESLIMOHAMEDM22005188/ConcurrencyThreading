@@ -1,46 +1,28 @@
-<<<<<<< HEAD
 cmake_minimum_required(VERSION 3.26)
-project(concurency_app)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Liste des fichiers sources de ton projet
-add_executable(concurency_app
-        main.cpp
-        WorkerConcurrency.cpp
-        LoggerSync.cpp
-        BenchmarkPerformence.cpp
-        BarberProblem.cpp
-        ElevatorProblem.cpp
-        BuffetProblem.cpp
-        LightouseProblem.cpp
-)
-
-# Sous Windows, forcer le mode console (corrige WinMain)
-if (WIN32)
-    set_target_properties(concurency_app PROPERTIES LINK_FLAGS "-Wl,-subsystem,console")
-endif()
-=======
-cmake_minimum_required(VERSION 3.31)
-project(concurency)
+project(CppConcurrencyPlayground VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(concurency_app main.cpp
-        WorkerConcurrency.cpp
-        LoggerSync.cpp
-        LoggerSync.hpp
-        BenchmarkPerformence.cpp
-        BenchmarkPerformence.hpp
-        BarberProblem.hpp
-        BarberProblem.cpp
-        ElevatorProblem.cpp
-        ElevatorProblem.hpp
-        BuffetProblem.cpp
-        BuffetProblem.hpp
-        LightouseProblem.cpp
-        LightouseProblem.hpp
+find_package(Threads REQUIRED)
+
+add_executable(concurrency_playground
+    main.cpp
+    WorkerConcurrency.cpp
+    LoggerSync.cpp
+    BenchmarkPerformence.cpp
+    BarberProblem.cpp
+    ElevatorProblem.cpp
+    BuffetProblem.cpp
+    LightouseProblem.cpp
 )
 
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+target_link_libraries(concurrency_playground PRIVATE Threads::Threads)
+
+if (MSVC)
+    target_compile_options(concurrency_playground PRIVATE /W4)
+else()
+    target_compile_options(concurrency_playground PRIVATE -Wall -Wextra -Wpedantic)
+endif()
