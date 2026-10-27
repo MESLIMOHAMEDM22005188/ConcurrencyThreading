@@ -5,11 +5,11 @@
 
 #include "WorkerConcurrency.hpp"
 #include "LoggerSync.hpp"
-#include "BenchmarkPerformence.hpp"
+#include "BenchmarkPerformance.hpp"
 #include "BarberProblem.hpp"
 #include "ElevatorProblem.hpp"
 #include "BuffetProblem.hpp"
-#include "LightouseProblem.hpp"
+#include "LighthouseProblem.hpp"
 
 int main() {
     bool keepRunning = true;
