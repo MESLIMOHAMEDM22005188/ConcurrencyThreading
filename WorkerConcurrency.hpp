@@ -2,7 +2,6 @@
 #define WORKERCONCURRENCY_HPP
 
 #include <vector>
-#include <string>
 
 namespace WorkerConcurrency {
     void executeAdditionTask(std::vector<int>& results);
@@ -10,4 +9,3 @@ namespace WorkerConcurrency {
 }
 
 #endif // WORKERCONCURRENCY_HPP
-
