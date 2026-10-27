@@ -12,11 +12,11 @@ add_executable(concurrency_playground
     main.cpp
     WorkerConcurrency.cpp
     LoggerSync.cpp
-    BenchmarkPerformence.cpp
+    BenchmarkPerformance.cpp
     BarberProblem.cpp
     ElevatorProblem.cpp
     BuffetProblem.cpp
-    LightouseProblem.cpp
+    LighthouseProblem.cpp
 )
 
 target_link_libraries(concurrency_playground PRIVATE Threads::Threads)
