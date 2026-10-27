@@ -6,98 +6,102 @@
 #include "WorkerConcurrency.hpp"
 #include "LoggerSync.hpp"
 #include "BenchmarkPerformence.hpp"
-
 #include "BarberProblem.hpp"
 #include "ElevatorProblem.hpp"
 #include "BuffetProblem.hpp"
 #include "LightouseProblem.hpp"
 
 int main() {
-    bool continuer = true;
-    while (continuer) {
+    bool keepRunning = true;
+
+    while (keepRunning) {
         std::cout << "\n==============================================\n";
-        std::cout << "Bienvenue dans le simulateur C++ multithread !" << std::endl;
-        std::cout << "Choisis un concept a explorer :" << std::endl;
-        std::cout << "==============================================" << std::endl << std::endl;
+        std::cout << "Welcome to the C++ Concurrency Simulator!" << std::endl;
+        std::cout << "Choose a concept to explore:" << std::endl;
+        std::cout << "==============================================\n\n";
 
-        std::cout << "1- Concurrence (multithreading)" << std::endl
-                  << "   Execute un calcul en parallele sur deux threads." << std::endl << std::endl;
+        std::cout << "1 - Concurrency (multithreading)\n"
+                  << "    Run a calculation in parallel across two threads.\n\n";
 
-        std::cout << "2- Synchronisation (mutex pour logs)" << std::endl
-                  << "   Ajoute des messages dans un vecteur depuis plusieurs threads." << std::endl << std::endl;
+        std::cout << "2 - Synchronization (mutex-protected logging)\n"
+                  << "    Append messages to a shared vector from multiple threads.\n\n";
 
-        std::cout << "3- Performance (benchmark simple)" << std::endl
-                  << "   Mesure le temps pour executer une boucle d'addition massive." << std::endl << std::endl;
+        std::cout << "3 - Performance (simple benchmark)\n"
+                  << "    Measure the runtime of an intensive addition loop.\n\n";
 
-        std::cout << "4- Probleme du Barbier Dormant" << std::endl
-                  << "   Simulation classique de synchronisation de threads." << std::endl << std::endl;
+        std::cout << "4 - Sleeping Barber Problem\n"
+                  << "    Simulate a classic thread-synchronization problem.\n\n";
 
-        std::cout << "5- Probleme de l Ascenseur" << std::endl
-                  << "   Gestion des requetes d etages concurrentes." << std::endl << std::endl;
+        std::cout << "5 - Elevator Problem\n"
+                  << "    Handle concurrent floor requests.\n\n";
 
-        std::cout << "6- Probleme du Buffet" << std::endl
-                  << "   Reapprovisionnement et consommation avec attente." << std::endl << std::endl;
+        std::cout << "6 - Buffet Problem\n"
+                  << "    Simulate consumption and replenishment with waiting.\n\n";
 
-        std::cout << "7- Probleme du Phare" << std::endl
-                  << "   Synchronisation entre un phare et des navires." << std::endl << std::endl;
+        std::cout << "7 - Lighthouse Problem\n"
+                  << "    Simulate synchronization between a lighthouse and ships.\n\n";
 
-        int choix = 0;
+        int choice = 0;
         while (true) {
-            std::cout << "Choisis un nombre entre 1 et 7 : ";
-            if (!(std::cin >> choix)) {
-                // entree invalide
+            std::cout << "Enter a number between 1 and 7: ";
+            if (!(std::cin >> choice)) {
+                // Recover from invalid input and clear the input buffer.
                 std::cin.clear();
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                std::cout << "Entree invalide, reessaie." << std::endl;
+                std::cout << "Invalid input. Please try again." << std::endl;
                 continue;
             }
-            if (choix >= 1 && choix <= 7) break;
-            std::cout << "Nombre hors plage, reessaie." << std::endl;
+
+            if (choice >= 1 && choice <= 7) {
+                break;
+            }
+
+            std::cout << "Number out of range. Please try again." << std::endl;
         }
 
-        std::cout << "\n==============================================" << std::endl;
+        std::cout << "\n==============================================\n";
 
-        switch (choix) {
+        switch (choice) {
             case 1: {
                 std::vector<int> results;
-                std::cout << "\nDemonstration de la concurrence :" << std::endl;
+                std::cout << "\nConcurrency demonstration:" << std::endl;
                 WorkerConcurrency::executeAdditionTask(results);
                 WorkerConcurrency::printResults(results);
                 break;
             }
             case 2: {
                 std::vector<std::string> logs;
-                std::cout << "\nTest de synchronisation avec mutex :" << std::endl;
+                std::cout << "\nMutex synchronization test:" << std::endl;
                 LoggerSync::runSafeLogging(logs);
                 LoggerSync::printLogs(logs);
                 break;
             }
             case 3: {
-                std::cout << "\nMesure de performance (benchmark) :" << std::endl;
-                double time = BenchmarkPerformance::runBenchmark();
-                BenchmarkPerformance::printPerformance(time);
+                std::cout << "\nPerformance benchmark:" << std::endl;
+                const double elapsedSeconds = BenchmarkPerformance::runBenchmark();
+                BenchmarkPerformance::printPerformance(elapsedSeconds);
                 break;
             }
             case 4: {
-                std::cout << "\nSimulation du probleme du barbier dormant :" << std::endl;
+                std::cout << "\nSleeping Barber Problem simulation:" << std::endl;
                 BarberProblem::runBarberProblem();
                 BarberProblem::printLogs();
                 break;
             }
             case 5: {
-                std::cout << "\nSimulation du probleme de l ascenseur :" << std::endl;
+                std::cout << "\nElevator Problem simulation:" << std::endl;
                 ElevatorProblem::runElevatorProblem();
                 std::cout << ElevatorProblem::generateElevatorHTML() << std::endl;
                 break;
             }
             case 6: {
-                std::cout << "\nSimulation du probleme du buffet :" << std::endl;
+                std::cout << "\nBuffet Problem simulation:" << std::endl;
                 BuffetProblem::runBuffetProblem();
                 std::cout << BuffetProblem::generateBuffetHTML() << std::endl;
                 break;
             }
             case 7: {
-                std::cout << "\nSimulation du probleme du phare :" << std::endl;
+                std::cout << "\nLighthouse Problem simulation:" << std::endl;
                 LighthouseProblem::runLighthouseProblem();
                 std::cout << LighthouseProblem::generateLighthouseHTML() << std::endl;
                 break;
@@ -106,13 +110,16 @@ int main() {
                 break;
         }
 
-        std::cout << "\n==============================================" << std::endl;
-        std::cout << "Veux-tu rejouer ? (o/n) : ";
-        char reponse;
-        std::cin >> reponse;
-        if (reponse != 'o' && reponse != 'O') continuer = false;
+        std::cout << "\n==============================================\n";
+        std::cout << "Would you like to run another example? (y/n): ";
+        char answer{};
+        std::cin >> answer;
+
+        if (answer != 'y' && answer != 'Y') {
+            keepRunning = false;
+        }
     }
 
-    std::cout << "\nMerci d'avoir utilise le simulateur ! a bientot." << std::endl;
+    std::cout << "\nThank you for using the simulator. Goodbye!" << std::endl;
     return 0;
 }
