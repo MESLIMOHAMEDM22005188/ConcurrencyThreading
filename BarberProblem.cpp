@@ -1,15 +1,16 @@
 #include "BarberProblem.hpp"
-#include <thread>
-#include <mutex>
+
+#include <chrono>
 #include <condition_variable>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <mutex>
 #include <queue>
 #include <sstream>
-#include <chrono>
-#include <vector>
 #include <string>
-#include <iostream>
-#include <iomanip>
-#include <map>
+#include <thread>
+#include <vector>
 
 namespace BarberProblem {
 
@@ -24,87 +25,89 @@ namespace BarberProblem {
 
     std::queue<int> customerQueue;
     std::vector<std::string> logMessages;
-    std::map<int, bool> served; // false = en attente, true = servi
+    std::map<int, bool> served; // false = waiting, true = served
 
     static std::chrono::steady_clock::time_point startTime;
 
     static long long now_ms() {
-        auto now = std::chrono::steady_clock::now();
+        const auto now = std::chrono::steady_clock::now();
         return std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
     }
 
-    void debugLog(const std::string& msg) {
-        std::ostringstream oss;
-        oss << "[" << std::setw(4) << now_ms() << " ms] " << msg;
+    void debugLog(const std::string& message) {
+        std::ostringstream stream;
+        stream << "[" << std::setw(4) << now_ms() << " ms] " << message;
         {
             std::lock_guard<std::mutex> lock(mtx);
-            logMessages.push_back(oss.str());
+            logMessages.push_back(stream.str());
         }
-        std::cout << oss.str() << std::endl;
+        std::cout << stream.str() << std::endl;
     }
 
     void barber() {
-        debugLog("Barbier: thread demarre");
+        debugLog("Barber: thread started");
         std::unique_lock<std::mutex> lock(mtx);
 
         while (shopOpen || !customerQueue.empty()) {
             if (customerQueue.empty()) {
-                if (!shopOpen) break;
-                debugLog("Barbier dort car pas de clients");
-                barberSleeping = true;
+                if (!shopOpen) {
+                    break;
+                }
 
+                debugLog("Barber is sleeping because there are no customers");
+                barberSleeping = true;
                 cvBarber.wait(lock, [] { return !customerQueue.empty() || !shopOpen; });
                 barberSleeping = false;
             }
 
             if (!customerQueue.empty()) {
-                int customerId = customerQueue.front();
+                const int customerId = customerQueue.front();
                 customerQueue.pop();
                 waitingCustomers--;
 
-                debugLog("Barbier coupe les cheveux du client #" + std::to_string(customerId));
+                debugLog("Barber is cutting the hair of customer #" + std::to_string(customerId));
                 lock.unlock();
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(700)); // simulation coupe
+                std::this_thread::sleep_for(std::chrono::milliseconds(700)); // Simulate a haircut.
 
                 lock.lock();
-                served[customerId] = true; // marque comme servi
+                served[customerId] = true;
                 cvCustomer.notify_all();
-                debugLog("Client #" + std::to_string(customerId) + " est parti");
+                debugLog("Customer #" + std::to_string(customerId) + " has been served");
             }
         }
 
-        debugLog("Barbier ferme le salon et rentre chez lui 💤");
+        debugLog("Barber closes the shop and goes home");
     }
 
     void customer(int id) {
-        debugLog("Client #" + std::to_string(id) + " thread demarre");
+        debugLog("Customer #" + std::to_string(id) + ": thread started");
 
         std::unique_lock<std::mutex> lock(mtx);
         if (!shopOpen) {
-            debugLog("Client #" + std::to_string(id) + " arrive mais le salon est ferme");
+            debugLog("Customer #" + std::to_string(id) + " arrives, but the shop is closed");
             return;
         }
 
         if (waitingCustomers == MAX_CHAIRS) {
-            debugLog("Client #" + std::to_string(id) + " part car pas de place");
+            debugLog("Customer #" + std::to_string(id) + " leaves because there is no waiting chair available");
             return;
         }
 
         waitingCustomers++;
         customerQueue.push(id);
         served[id] = false;
-        debugLog("Client #" + std::to_string(id) + " s'assoit (attente=" + std::to_string(waitingCustomers) + ")");
+        debugLog("Customer #" + std::to_string(id) + " takes a seat (waiting=" +
+                 std::to_string(waitingCustomers) + ")");
 
         if (barberSleeping) {
-            debugLog("Client #" + std::to_string(id) + " reveille le barbier");
+            debugLog("Customer #" + std::to_string(id) + " wakes up the barber");
             cvBarber.notify_one();
         }
 
-        debugLog("Client #" + std::to_string(id) + " attend son tour");
+        debugLog("Customer #" + std::to_string(id) + " is waiting for their turn");
         cvCustomer.wait(lock, [&] { return served[id]; });
-
-        debugLog("Client #" + std::to_string(id) + " a fini et quitte le salon");
+        debugLog("Customer #" + std::to_string(id) + " has finished and leaves the shop");
     }
 
     void runBarberProblem() {
@@ -116,21 +119,26 @@ namespace BarberProblem {
             barberSleeping = false;
             shopOpen = true;
             served.clear();
-            while (!customerQueue.empty()) customerQueue.pop();
+            while (!customerQueue.empty()) {
+                customerQueue.pop();
+            }
         }
 
-        debugLog("runBarberProblem: demarrage simulation");
+        debugLog("runBarberProblem: starting simulation");
         std::thread barberThread(barber);
 
         std::vector<std::thread> customers;
-        for (int i = 1; i <= 8; ++i) {
-            debugLog("runBarberProblem: creation client #" + std::to_string(i));
-            customers.emplace_back(customer, i);
+        for (int id = 1; id <= 8; ++id) {
+            debugLog("runBarberProblem: creating customer #" + std::to_string(id));
+            customers.emplace_back(customer, id);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
 
-        for (auto &t : customers)
-            if (t.joinable()) t.join();
+        for (auto& thread : customers) {
+            if (thread.joinable()) {
+                thread.join();
+            }
+        }
 
         {
             std::lock_guard<std::mutex> lock(mtx);
@@ -139,26 +147,29 @@ namespace BarberProblem {
             cvCustomer.notify_all();
         }
 
-        if (barberThread.joinable())
+        if (barberThread.joinable()) {
             barberThread.join();
+        }
 
-        debugLog("runBarberProblem: simulation terminee");
+        debugLog("runBarberProblem: simulation completed");
     }
 
     void printLogs() {
         std::lock_guard<std::mutex> lock(mtx);
-        std::cout << "\n=== Journal du Barbier Dormant ===" << std::endl;
-        for (const auto &line : logMessages)
+        std::cout << "\n=== Sleeping Barber Log ===" << std::endl;
+        for (const auto& line : logMessages) {
             std::cout << line << std::endl;
-        std::cout << "==================================" << std::endl;
+        }
+        std::cout << "============================" << std::endl;
     }
 
     std::string generateBarberHTML() {
         std::lock_guard<std::mutex> lock(mtx);
         std::ostringstream html;
-        html << "<html><body><h1>Problème du Barbier Dormant</h1><ul>";
-        for (const auto &line : logMessages)
+        html << "<html><body><h1>Sleeping Barber Problem</h1><ul>";
+        for (const auto& line : logMessages) {
             html << "<li>" << line << "</li>";
+        }
         html << "</ul></body></html>";
         return html.str();
     }
