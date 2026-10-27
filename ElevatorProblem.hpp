@@ -8,5 +8,4 @@ namespace ElevatorProblem {
     std::string generateElevatorHTML();
 }
 
-#endif
-
+#endif // ELEVATOR_PROBLEM_HPP
