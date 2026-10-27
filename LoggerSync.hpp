@@ -1,13 +1,12 @@
-#ifndef LOGGERSYNC_HPP
-#define LOGGERSYNC_HPP
+#ifndef LOGGER_SYNC_HPP
+#define LOGGER_SYNC_HPP
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace LoggerSync {
     void runSafeLogging(std::vector<std::string>& logMessages);
     void printLogs(const std::vector<std::string>& logs);
 }
 
-#endif // LOGGERSYNC_HPP
-
+#endif // LOGGER_SYNC_HPP
