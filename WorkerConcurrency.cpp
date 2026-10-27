@@ -1,91 +1,67 @@
 #include "WorkerConcurrency.hpp"
-#include <thread>
-#include <iostream>
-<<<<<<< HEAD
-#include <vector>
+
 #include <chrono>
+#include <iostream>
+#include <thread>
+#include <vector>
 
 namespace WorkerConcurrency {
 
-    // Calcule la somme d'une plage de nombres entiers
-=======
-
-namespace WorkerConcurrency {
-
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+    // Calculate the sum of an inclusive integer range.
     void addRange(int start, int end, int& result) {
         result = 0;
-        for (int i = start; i <= end; ++i) {
-            result += i;
+        for (int value = start; value <= end; ++value) {
+            result += value;
         }
     }
 
-<<<<<<< HEAD
-    // Execute la tache en deux threads
+    // Split the addition task across two threads and measure its runtime.
     void executeAdditionTask(std::vector<int>& results) {
-        int r1 = 0, r2 = 0;
+        int firstResult = 0;
+        int secondResult = 0;
 
-        std::cout << "\n=== CONTEXTE DE L'EXERCICE ===\n";
-        std::cout << "Dans ce scenario, nous voulons additionner les nombres de 1 a 10 000.\n";
-        std::cout << "Mais au lieu de faire ce calcul dans un seul thread (sequentiellement),\n";
-        std::cout << "nous allons decouper la tache en deux parties et les executer en parallele.\n";
-        std::cout << "Thread 1 : additionne de 1 a 5 000\n";
-        std::cout << "Thread 2 : additionne de 5 001 a 10 000\n";
-        std::cout << "Cela illustre le principe de la concurrence : plusieurs taches s'executent simultanement.\n\n";
+        std::cout << "\n=== EXERCISE OVERVIEW ===\n";
+        std::cout << "We want to add all integers from 1 to 10,000.\n";
+        std::cout << "Instead of running the calculation sequentially on one thread,\n";
+        std::cout << "we split it into two parts and execute them concurrently.\n";
+        std::cout << "Thread 1: adds the integers from 1 to 5,000.\n";
+        std::cout << "Thread 2: adds the integers from 5,001 to 10,000.\n";
+        std::cout << "This illustrates concurrency: multiple tasks make progress during overlapping periods.\n\n";
+        std::cout << "Creating and starting both threads...\n";
 
-        std::cout << "Creation et lancement des deux threads...\n";
+        const auto startTime = std::chrono::high_resolution_clock::now();
 
-        auto startTime = std::chrono::high_resolution_clock::now();
+        std::thread firstThread(addRange, 1, 5000, std::ref(firstResult));
+        std::thread secondThread(addRange, 5001, 10000, std::ref(secondResult));
 
-        // Lancement des threads
-        std::thread t1(addRange, 1, 5000, std::ref(r1));
-        std::thread t2(addRange, 5001, 10000, std::ref(r2));
+        firstThread.join();
+        secondThread.join();
 
-        // Attente de leur fin
-        t1.join();
-        t2.join();
+        const auto endTime = std::chrono::high_resolution_clock::now();
+        const std::chrono::duration<double> elapsed = endTime - startTime;
 
-        auto endTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> duration = endTime - startTime;
+        std::cout << "Both threads have completed their work.\n";
+        std::cout << "Total execution time: " << elapsed.count() << " seconds\n\n";
 
-        std::cout << "Les deux threads ont termine leur travail.\n";
-        std::cout << "Temps total d'execution : " << duration.count() << " secondes\n\n";
-
-        results = { r1, r2 };
+        results = {firstResult, secondResult};
     }
 
-    // Affiche les resultats
+    // Display the partial sums and their combined result.
     void printResults(const std::vector<int>& results) {
-        std::cout << "=== RESULTATS ===\n";
-        for (size_t i = 0; i < results.size(); ++i) {
-            std::cout << "Thread " << (i + 1)
-                      << " : Somme partielle = " << results[i] << '\n';
+        std::cout << "=== RESULTS ===\n";
+
+        for (std::size_t index = 0; index < results.size(); ++index) {
+            std::cout << "Thread " << (index + 1)
+                      << ": partial sum = " << results[index] << '\n';
         }
-        std::cout << "Somme totale combinee : " << (results[0] + results[1]) << "\n\n";
 
-        std::cout << "Remarque :\n";
-        std::cout << "Meme si cette addition semble simple, le principe ici est fondamental :\n";
-        std::cout << "repartir une tache sur plusieurs threads permet d'exploiter la puissance\n";
-        std::cout << "des processeurs multi-coeurs. C'est ce qu'on appelle la concurrence.\n";
-        std::cout << "Ce concept est essentiel en programmation systeme, serveur ou simulation.\n";
-    }
-}
-=======
-    void executeAdditionTask(std::vector<int>& results) {
-        int r1 = 0, r2 = 0;
-        std::thread t1(addRange, 1, 5000, std::ref(r1));
-        std::thread t2(addRange, 5001, 10000, std::ref(r2));
-        t1.join();
-        t2.join();
-        results = { r1, r2 };
-    }
-
-    void printResults(const std::vector<int>& results) {
-        std::cout << "Résultat Concurrence (addition parallèle) :\n";
-        for (size_t i = 0; i < results.size(); ++i) {
-            std::cout << " Thread " << (i + 1) << " → Somme: " << results[i] << '\n';
+        if (results.size() >= 2) {
+            std::cout << "Combined total: " << (results[0] + results[1]) << "\n\n";
         }
-    }
-}
 
->>>>>>> d7828240d4531925dbd6db04f464d848ad9d7580
+        std::cout << "Why it matters:\n";
+        std::cout << "Splitting work across threads can help use multi-core processors.\n";
+        std::cout << "Concurrency is a key concept in systems programming, servers, and simulations.\n";
+    }
+
+} // namespace WorkerConcurrency
