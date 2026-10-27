@@ -8,5 +8,4 @@ namespace BuffetProblem {
     std::string generateBuffetHTML();
 }
 
-#endif
-
+#endif // BUFFET_PROBLEM_HPP
