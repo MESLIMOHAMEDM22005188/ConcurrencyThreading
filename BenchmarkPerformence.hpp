@@ -1,10 +1,9 @@
-#ifndef BENCHMARKPERFORMANCE_HPP
-#define BENCHMARKPERFORMANCE_HPP
+#ifndef BENCHMARK_PERFORMANCE_HPP
+#define BENCHMARK_PERFORMANCE_HPP
 
 namespace BenchmarkPerformance {
     double runBenchmark();
     void printPerformance(double seconds);
 }
 
-#endif // BENCHMARKPERFORMANCE_HPP
-
+#endif // BENCHMARK_PERFORMANCE_HPP
